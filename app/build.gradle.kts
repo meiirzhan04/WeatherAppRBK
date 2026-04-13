@@ -43,6 +43,10 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.androidx.compose.bom))
+
+    implementation(libs.ui)
+    implementation(libs.androidx.compose.material3.material33)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.material3)
     testImplementation(libs.junit)
@@ -62,4 +66,5 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.play.services.location)
     implementation(libs.ktor.client.okhttp)
+    implementation(project(path = ":resources"))
 }

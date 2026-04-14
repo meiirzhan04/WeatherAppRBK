@@ -19,6 +19,7 @@ uiGraphics = "1.10.6"
 ktor = "3.4.0"
 compose = "1.10.0"
 material3 = "1.4.0"
+datastorePreferencesCore = "1.2.1"
 [libraries]
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-compose-material3-material3 = { module = "androidx.compose.material3:material3" }
@@ -54,6 +55,7 @@ compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-previ
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
 ui = { module = "androidx.compose.ui:ui" }
+androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 
 
 [plugins]

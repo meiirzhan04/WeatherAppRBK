@@ -43,3 +43,14 @@ val TabBarItemSelected = Color(0xFF377DC3)
 val TabBarItemUnselected = Color(0x334A90D6)
 val TabBarIconSelected = SoftWhite
 val TabBarIconUnselected = MintLight
+val TabBarContainerLight = Color(0xFFFFFFFF)
+val TabBarItemSelectedLight = Color(0xFFE0F2FE)
+val TabBarItemUnselectedLight = Color(0xFFFFFFFF)
+val TabBarIconSelectedLight = PrimaryBlue
+val TabBarIconUnselectedLight = Color(0xFF94A3B8)
+
+val TabBarContainerDark = Color(0xFF131C2E)
+val TabBarItemSelectedDark = Color(0xFF1E3A5F)
+val TabBarItemUnselectedDark = Color(0xFF131C2E)
+val TabBarIconSelectedDark = AccentTurquoise
+val TabBarIconUnselectedDark = Color(0xFF64748B)

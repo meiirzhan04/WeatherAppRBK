@@ -13,14 +13,15 @@ fun WeatherAppRBKTheme(
     content: @Composable () -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
-
     val typography = defaultSanaTypography()
     val colors = if (isDark) DarkColors else LightColors
+    val dimensions = WeatherAppRBKDimensions()
 
     WeatherAppRBKThemeImpl(
         colors = colors,
         content = content,
-        typography = typography
+        typography = typography,
+        dimensions = dimensions
     )
 }
 
@@ -28,21 +29,16 @@ fun WeatherAppRBKTheme(
 fun WeatherAppRBKThemeImpl(
     typography: WeatherAppRBKTypography,
     colors: WeatherAppRBKColor,
+    dimensions: WeatherAppRBKDimensions,
     content: @Composable () -> Unit,
 ) {
-    val rememberedColors = remember {
-        colors.copy()
-    }.apply { updateColorsFrom(colors) }
-
-
+    val rememberedColors = remember { colors.copy() }.apply { updateColorsFrom(colors) }
     CompositionLocalProvider(
         LocalWeatherAppRBKColors provides rememberedColors,
-        LocalWeatherAppRBKTypography provides typography
-    ) {
-        ProvideTextStyle(value = typography.weight400Size12LineHeight16, content)
-    }
+        LocalWeatherAppRBKTypography provides typography,
+        LocalWeatherAppRBKDimensions provides dimensions
+    ) { ProvideTextStyle(value = typography.weight400Size12LineHeight16, content) }
 }
-
 
 object WeatherAppRBKTheme {
     val colors: WeatherAppRBKColor
@@ -58,5 +54,5 @@ object WeatherAppRBKTheme {
     val dimensions: WeatherAppRBKDimensions
         @Composable
         @ReadOnlyComposable
-        get() = LocalSpacing.current
+        get() = LocalWeatherAppRBKDimensions.current
 }

@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.material33)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.material3)
+    implementation(libs.protolite.well.known.types)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

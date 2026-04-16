@@ -21,4 +21,4 @@ data class WeatherAppRBKDimensions(
     val textFieldCornerRadius: Dp = 12.dp
 )
 
-val LocalSpacing = staticCompositionLocalOf { WeatherAppRBKDimensions() }
+val LocalWeatherAppRBKDimensions = staticCompositionLocalOf { WeatherAppRBKDimensions() }

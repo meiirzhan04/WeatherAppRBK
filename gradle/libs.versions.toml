@@ -9,20 +9,24 @@ appcompat = "1.7.1"
 koinAndroid = "4.2.0"
 koinAndroidxCompose = "4.2.0"
 loggingInterceptor = "5.3.2"
-androidx-lifecycle = "2.9.6"
+androidx-lifecycle = "2.10.0"
 material = "1.13.0"
 composeBom = "2026.03.00"
 kotlin = "2.3.20"
 playServicesLocation = "21.3.0"
 retrofit = "3.0.0"
 uiGraphics = "1.10.6"
-ktor = "3.4.0"
-compose = "1.10.0"
+ktor = "3.4.2"
+compose = "1.10.3"
 material3 = "1.4.0"
 datastorePreferencesCore = "1.2.1"
 protoliteWellKnownTypes = "18.0.1"
+ksp = "2.3.4"
+room = "2.8.4"
+ui = "1.10.6"
 [libraries]
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-compose-material3-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-material3-material32 = { module = "androidx.compose.material3:material3" }
 androidx-compose-material3-material33 = { module = "androidx.compose.material3:material3" }
@@ -49,8 +53,8 @@ material3 = { module = "androidx.compose.material3:material3" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
-androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtimeCompose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
@@ -58,11 +62,17 @@ compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", v
 ui = { module = "androidx.compose.ui:ui" }
 androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-compose-ui-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 
 [plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 

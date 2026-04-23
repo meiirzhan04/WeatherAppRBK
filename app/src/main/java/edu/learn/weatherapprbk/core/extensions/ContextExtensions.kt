@@ -1,14 +1,17 @@
 package edu.learn.weatherapprbk.core.extensions
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.provider.Settings
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 fun Context.isLocationEnabled(): Boolean {
@@ -16,8 +19,6 @@ fun Context.isLocationEnabled(): Boolean {
     return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
             locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 }
-
-
 fun Context.hasLocationPermission(): Boolean {
     val fine = ContextCompat.checkSelfPermission(
         this,
@@ -45,11 +46,8 @@ fun Context.isInternetAvailable(): Boolean {
 fun Context.openLocationSettings() {
     startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 }
-
-fun Context.openAppSettings() {
-    val intent = Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    )
-    startActivity(intent)
+tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

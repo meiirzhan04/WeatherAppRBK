@@ -2,6 +2,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -44,12 +45,13 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
-
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.ui)
     implementation(libs.androidx.compose.material3.material33)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.material3)
     implementation(libs.protolite.well.known.types)
+    implementation(libs.androidx.compose.ui.ui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -67,5 +69,9 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.play.services.location)
     implementation(libs.ktor.client.okhttp)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    ksp(libs.androidx.room.compiler)
     implementation(project(path = ":resources"))
 }

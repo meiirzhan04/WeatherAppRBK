@@ -5,5 +5,13 @@ import org.koin.dsl.module
 import org.koin.core.module.dsl.viewModel
 
 val homeModule = module {
-    viewModel { HomeViewModel(getCurrentWeatherUseCase = get(), getCurrentLocationUseCase = get()) }
+    viewModel {
+        HomeViewModel(
+            getCurrentWeatherUseCase = get(),
+            getForecastUseCase = get(),
+            getCurrentLocationUseCase = get(),
+            getCachedWeatherUseCase = get(),
+            baseWeatherSetup = get()
+        )
+    }
 }

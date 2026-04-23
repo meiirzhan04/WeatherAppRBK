@@ -15,10 +15,14 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalResourceApi::class)
 private fun weatherAppRBKFontFamily(): FontFamily = FontFamily(
     Font(R.font.sf_pro_400, weight = FontWeight.W400),
+    Font(R.font.sf_pro_500, weight = FontWeight.W500),
+    Font(R.font.sf_pro_600, weight = FontWeight.W600),
+    Font(R.font.sf_pro_700, weight = FontWeight.W700),
 )
 
 @Immutable
 data class WeatherAppRBKTypography(
+    val weight110Size92LineHeight92: TextStyle,
     val weight400Size12LineHeight16: TextStyle,
     val weight400Size13LineHeight18: TextStyle,
     val weight400Size14LineHeight20: TextStyle,
@@ -32,6 +36,7 @@ data class WeatherAppRBKTypography(
     val weight500Size18LineHeight24: TextStyle,
     val weight500Size22LineHeight28: TextStyle,
     val weight500Size24LineHeight30: TextStyle,
+    val weight500Size32LineHeight38: TextStyle,
     val weight600Size16LineHeight22: TextStyle,
     val weight600Size20LineHeight25: TextStyle,
     val weight600Size28LineHeight34: TextStyle,
@@ -45,6 +50,12 @@ data class WeatherAppRBKTypography(
 fun defaultSanaTypography(): WeatherAppRBKTypography {
     val fontFamily = weatherAppRBKFontFamily()
     return WeatherAppRBKTypography(
+        weight110Size92LineHeight92 = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Thin,
+            fontSize = 92.sp,
+            lineHeight = 92.sp
+        ),
         weight400Size12LineHeight16 = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.W400,
@@ -79,7 +90,8 @@ fun defaultSanaTypography(): WeatherAppRBKTypography {
             fontFamily = fontFamily,
             fontWeight = FontWeight.W500,
             fontSize = 14.sp,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
+            letterSpacing = 0.1.sp
         ),
         weight500Size15LineHeight20 = TextStyle(
             fontFamily = fontFamily,
@@ -116,6 +128,12 @@ fun defaultSanaTypography(): WeatherAppRBKTypography {
             fontWeight = FontWeight.W500,
             fontSize = 24.sp,
             lineHeight = 30.sp
+        ),
+        weight500Size32LineHeight38 = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.W500,
+            fontSize = 32.sp,
+            lineHeight = 38.sp
         ),
         weight600Size16LineHeight22 = TextStyle(
             fontFamily = fontFamily,

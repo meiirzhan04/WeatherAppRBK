@@ -8,6 +8,7 @@ val SoftWhite = Color(0xFFFFFBFC)
 val AccentTurquoise = Color(0xFF60DACF)
 
 // Light theme
+val WhiteTransparent = Color(0x85FFFFFF)
 val BackgroundLight = Color(0xFF377DC3)
 val SurfaceLight = Color(0xFF4A90D6)
 val CardLight = Color(0xFF4A90D6)

@@ -5,5 +5,7 @@ data class WeatherResponseDto(
     val weather: List<WeatherDto>,
     val main: MainDto,
     val wind: WindDto,
-    val name: String
+    val name: String,
+    val timezone: Int = 0,
+    val sys: SysDto = SysDto()
 )

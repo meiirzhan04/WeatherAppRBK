@@ -7,6 +7,7 @@ import edu.learn.weatherapprbk.core.extensions.isInternetAvailable
 import edu.learn.weatherapprbk.core.extensions.isLocationEnabled
 import edu.learn.weatherapprbk.core.extensions.isSameLocation
 import edu.learn.weatherapprbk.data.local.WeatherLocalStorage
+import edu.learn.weatherapprbk.domain.model.ForecastData
 import edu.learn.weatherapprbk.domain.model.UserLocation
 import edu.learn.weatherapprbk.domain.model.WeatherInfo
 
@@ -37,6 +38,12 @@ class BaseWeatherSetup(
     }
 
     fun getCachedWeather(): WeatherInfo? = localStorage.getCachedWeather()
+
+    fun saveLastForecastData(forecastData: ForecastData) {
+        localStorage.saveLastForecastData(forecastData)
+    }
+
+    fun getCachedForecastData(): ForecastData? = localStorage.getCachedForecastData()
 
     fun getLastUpdateTime(): Long? = localStorage.getLastUpdateTime()
 

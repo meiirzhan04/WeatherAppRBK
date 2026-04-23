@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -55,6 +56,8 @@ import edu.learn.weatherapprbk.R
 import edu.learn.weatherapprbk.core.extensions.hasLocationPermission
 import edu.learn.weatherapprbk.core.extensions.isLocationEnabled
 import edu.learn.weatherapprbk.core.extensions.openLocationSettings
+import edu.learn.weatherapprbk.domain.model.WeatherInfo
+import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.HeaderBlock
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.ShowTimeWeatherBox
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.ShowWeatherTenDayBox
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.WeatherCollapsingHeader
@@ -203,33 +206,6 @@ private fun HomeScreenContent(
 ) {
     val weather = state.weather ?: return
     val listState = rememberLazyListState()
-    val density = LocalDensity.current
-    val expandedHeaderHeight = 300.dp
-    val collapsedHeaderHeight = 110.dp
-
-    val collapseRangePx = remember(density) { with(density) { (expandedHeaderHeight - collapsedHeaderHeight).toPx() } }
-    val scrollOffsetPx by remember(listState) {
-        derivedStateOf {
-            when {
-                listState.firstVisibleItemIndex > 0 -> collapseRangePx
-                else -> listState.firstVisibleItemScrollOffset.toFloat().coerceAtMost(collapseRangePx)
-            }
-        }
-    }
-
-    val collapseProgress by remember(scrollOffsetPx, collapseRangePx) {
-        derivedStateOf {
-            if (collapseRangePx == 0f) 0f
-            else (scrollOffsetPx / collapseRangePx).coerceIn(0f, 1f)
-        }
-    }
-
-    val currentHeaderHeight = lerp(
-        start = expandedHeaderHeight,
-        stop = collapsedHeaderHeight,
-        fraction = collapseProgress
-    )
-
     Box(modifier = modifier.fillMaxSize()) {
         Crossfade(targetState = weather) { currentWeather ->
             Image(
@@ -239,7 +215,6 @@ private fun HomeScreenContent(
                 contentScale = ContentScale.Crop
             )
         }
-        Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.16f)))
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = onRefresh,
@@ -251,7 +226,19 @@ private fun HomeScreenContent(
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp)
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(expandedHeaderHeight))
+                    HeaderBlock(
+                        title = stringResource(R.string.weather_title),
+                        cityName = weather.cityName,
+                        degree = stringResource(R.string.temperature_degree, weather.temperature.roundToInt()),
+                        conditionText = WeatherVisualResolver.resolveConditionText(description = weather.description, fallbackText = stringResource(R.string.weather_condition_default)),
+                        max = stringResource(R.string.temperature_degree, weather.tempMax.roundToInt()),
+                        min = stringResource(R.string.temperature_degree, weather.tempMin.roundToInt()),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.TopCenter)
+                            .zIndex(2f)
+                            .statusBarsPadding()
+                    )
                     inlineNoticeMessage(state)?.let { message ->
                         Box(
                             modifier = Modifier
@@ -282,28 +269,10 @@ private fun HomeScreenContent(
                             forecast = state.forecast,
                             modifier = Modifier.fillMaxWidth()
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
         }
-
-        WeatherCollapsingHeader(
-            title = stringResource(R.string.weather_title),
-            cityName = weather.cityName,
-            degree = stringResource(R.string.temperature_degree, weather.temperature.roundToInt()),
-            conditionText = WeatherVisualResolver.resolveConditionText(description = weather.description, fallbackText = stringResource(R.string.weather_condition_default)),
-            max = stringResource(R.string.temperature_degree, weather.tempMax.roundToInt()),
-            min = stringResource(R.string.temperature_degree, weather.tempMin.roundToInt()),
-            progress = collapseProgress,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(currentHeaderHeight)
-                .align(Alignment.TopCenter)
-                .zIndex(2f)
-                .statusBarsPadding()
-                .padding(horizontal = 24.dp)
-        )
     }
 }
 
@@ -319,7 +288,7 @@ private fun HomeStatusScreen(
     Box(modifier = modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = backgroundRes),
-            contentDescription = null,
+            contentDescription = "",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )

@@ -24,6 +24,7 @@ protoliteWellKnownTypes = "18.0.1"
 ksp = "2.3.4"
 room = "2.8.4"
 ui = "1.10.6"
+navigationCompose = "2.9.8"
 [libraries]
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -66,6 +67,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-compose-ui-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 
 [plugins]

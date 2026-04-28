@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -45,6 +46,8 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3.v130)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.ui)
     implementation(libs.androidx.compose.material3.material33)
@@ -53,6 +56,8 @@ dependencies {
     implementation(libs.protolite.well.known.types)
     implementation(libs.androidx.compose.ui.ui)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.xr.compose.material3.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

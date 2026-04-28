@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
 import edu.learn.weatherapprbk.domain.model.HourlyForecast
-import edu.learn.weatherapprbk.feature.home.presentation.WeatherVisualResolver.resolveHourlyWeatherIcon
+import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherVisualResolver.resolveHourlyWeatherIcon
 import edu.learn.weatherapprbk.feature.home.presentation.components.weatherGlassCard
 
 @Composable
@@ -32,7 +32,7 @@ fun ShowTimeWeatherBox(
     hourlyForecast: List<HourlyForecast>
 ) {
     Box(
-        modifier = Modifier.Companion
+        modifier = Modifier
             .weatherGlassCard()
     ) {
         Column(
@@ -73,17 +73,27 @@ private fun ColumnInfoWeather(item: HourlyForecast) {
         verticalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.extraSmall)
     ) {
         Text(
-            text = item.timeLabel,
+            text = if (item.isNow) stringResource(R.string.now) else item.timeLabel,
             style = WeatherAppRBKTheme.typography.weight500Size14LineHeight20,
             color = WeatherAppRBKTheme.colors.textPrimary
         )
         Image(
-            painter = painterResource(resolveHourlyWeatherIcon(item.condition, item.iconCode)),
-            contentDescription = null,
+            painter = painterResource(
+                when {
+                    item.isSunset -> R.drawable.ic_sunset
+                    item.isSunrise -> R.drawable.ic_sunrise
+                    else -> resolveHourlyWeatherIcon(item.condition, item.iconCode)
+                }
+            ),
+            contentDescription = "",
             modifier = Modifier.size(22.dp)
         )
         Text(
-            text = stringResource(R.string.temperature_degree, item.temperature),
+            text = when {
+                item.isSunset -> stringResource(R.string.sunset)
+                item.isSunrise -> stringResource(R.string.sunrise)
+                else -> stringResource(R.string.temperature_degree, item.temperature)
+            },
             style = WeatherAppRBKTheme.typography.weight500Size15LineHeight20,
             color = WeatherAppRBKTheme.colors.textPrimary
         )

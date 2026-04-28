@@ -8,9 +8,7 @@ import kotlin.math.abs
 
 object WeatherDateTimeFormatter {
     fun dayLabel(timestampSeconds: Long, timezoneOffsetSeconds: Int, locale: Locale = Locale.getDefault()): String {
-        val formatter = SimpleDateFormat("EEE", locale).apply {
-            timeZone = timezoneFromOffsetSeconds(timezoneOffsetSeconds)
-        }
+        val formatter = SimpleDateFormat("EEE", locale).apply { timeZone = timezoneFromOffsetSeconds(timezoneOffsetSeconds) }
         val value = formatter.format(Date(timestampSeconds * 1000))
         return value.replaceFirstChar { char ->
             if (char.isLowerCase()) char.titlecase(locale) else char.toString()
@@ -18,20 +16,12 @@ object WeatherDateTimeFormatter {
     }
 
     fun hourLabel(timestampSeconds: Long, timezoneOffsetSeconds: Int, locale: Locale = Locale.getDefault()): String {
-        val formatter = SimpleDateFormat("HH", locale).apply {
-            timeZone = timezoneFromOffsetSeconds(timezoneOffsetSeconds)
-        }
+        val formatter = SimpleDateFormat("HH", locale).apply { timeZone = timezoneFromOffsetSeconds(timezoneOffsetSeconds) }
         return formatter.format(Date(timestampSeconds * 1000))
     }
 
-    fun timeLabel(
-        timestampSeconds: Long,
-        timezoneOffsetSeconds: Int,
-        locale: Locale = Locale.getDefault()
-    ): String {
-        val formatter = SimpleDateFormat("HH:mm", locale).apply {
-            timeZone = timezoneFromOffsetSeconds(timezoneOffsetSeconds)
-        }
+    fun timeLabel(timestampSeconds: Long, timezoneOffsetSeconds: Int, locale: Locale = Locale.getDefault()): String {
+        val formatter = SimpleDateFormat("HH:mm", locale).apply { timeZone = timezoneFromOffsetSeconds(timezoneOffsetSeconds) }
         return formatter.format(Date(timestampSeconds * 1000))
     }
 

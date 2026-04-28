@@ -24,8 +24,7 @@ import androidx.compose.ui.unit.dp
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
 import edu.learn.weatherapprbk.domain.model.ForecastDay
-import edu.learn.weatherapprbk.feature.home.presentation.WeatherVisualResolver.resolveHourlyWeatherIcon
-import edu.learn.weatherapprbk.feature.home.presentation.components.TemperatureRangeBar
+import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherVisualResolver.resolveHourlyWeatherIcon
 import edu.learn.weatherapprbk.feature.home.presentation.components.weatherGlassCard
 import kotlin.math.max
 

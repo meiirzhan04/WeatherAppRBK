@@ -39,7 +39,6 @@ sealed interface HomeIntent {
     data object Retry : HomeIntent
 }
 sealed interface HomeEffect {
-
 }
 
 sealed interface HomeError {

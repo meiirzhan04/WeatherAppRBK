@@ -27,8 +27,6 @@ import edu.learn.weatherapprbk.R
 import edu.learn.weatherapprbk.domain.model.ForecastDay
 import edu.learn.weatherapprbk.domain.model.WeatherDetails
 import edu.learn.weatherapprbk.domain.model.WeatherInfo
-import edu.learn.weatherapprbk.feature.home.presentation.components.UvIndexBar
-import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherMetricRow
 import edu.learn.weatherapprbk.feature.home.presentation.components.averageMaxDiffText
 import edu.learn.weatherapprbk.feature.home.presentation.components.averageMaxMessage
 import edu.learn.weatherapprbk.feature.home.presentation.components.feelsLikeMessage

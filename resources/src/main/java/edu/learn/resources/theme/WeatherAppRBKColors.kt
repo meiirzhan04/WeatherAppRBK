@@ -26,7 +26,8 @@ internal val LightColors = WeatherAppRBKColor(
     tabBarItemUnselected = TabBarItemUnselectedLight,
     tabBarIconSelected = TabBarIconSelectedLight,
     tabBarIconUnselected = TabBarIconUnselectedLight,
-    whiteTransparent = WhiteTransparent
+    whiteTransparent = WhiteTransparent,
+    detailBackground = DetailBackground
 )
 
 internal val DarkColors = WeatherAppRBKColor(
@@ -48,7 +49,8 @@ internal val DarkColors = WeatherAppRBKColor(
     tabBarItemUnselected = TabBarItemUnselectedDark,
     tabBarIconSelected = TabBarIconSelectedDark,
     tabBarIconUnselected = TabBarIconUnselectedDark,
-    whiteTransparent = WhiteTransparent
+    whiteTransparent = WhiteTransparent,
+    detailBackground = DetailBackground
 )
 
 @Immutable
@@ -71,7 +73,8 @@ class WeatherAppRBKColor(
     tabBarItemSelected: Color,
     tabBarItemUnselected: Color,
     tabBarIconSelected: Color,
-    tabBarIconUnselected: Color
+    tabBarIconUnselected: Color,
+    detailBackground: Color
 ) {
     var primary by mutableStateOf(primary)
         private set
@@ -130,6 +133,8 @@ class WeatherAppRBKColor(
     var whiteTransparent by mutableStateOf(whiteTransparent)
         private set
 
+    var detailBackground by mutableStateOf(detailBackground)
+        private set
 
     fun copy(
         primary: Color = this.primary,
@@ -150,7 +155,8 @@ class WeatherAppRBKColor(
         tabBarItemUnselected: Color = this.tabBarItemUnselected,
         tabBarIconSelected: Color = this.tabBarIconSelected,
         tabBarIconUnselected: Color = this.tabBarIconUnselected,
-        whiteTransparent: Color = this.whiteTransparent
+        whiteTransparent: Color = this.whiteTransparent,
+        detailBackground: Color = this.detailBackground
     ) = WeatherAppRBKColor(
         primary = primary,
         secondary = secondary,
@@ -170,7 +176,8 @@ class WeatherAppRBKColor(
         tabBarItemUnselected = tabBarItemUnselected,
         tabBarIconSelected = tabBarIconSelected,
         tabBarIconUnselected = tabBarIconUnselected,
-        whiteTransparent = whiteTransparent
+        whiteTransparent = whiteTransparent,
+        detailBackground = detailBackground
     )
 
     fun updateColorsFrom(other: WeatherAppRBKColor) {
@@ -193,6 +200,8 @@ class WeatherAppRBKColor(
         tabBarIconSelected = other.tabBarIconSelected
         tabBarIconUnselected = other.tabBarIconUnselected
         whiteTransparent = other.whiteTransparent
+        detailBackground = other.detailBackground
+
     }
 }
 

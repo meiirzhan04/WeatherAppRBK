@@ -23,6 +23,7 @@ private fun weatherAppRBKFontFamily(): FontFamily = FontFamily(
 @Immutable
 data class WeatherAppRBKTypography(
     val weight110Size92LineHeight92: TextStyle,
+    val weight300Size42LineHeight48LetterSpacing4: TextStyle,
     val weight400Size12LineHeight16: TextStyle,
     val weight400Size13LineHeight18: TextStyle,
     val weight400Size14LineHeight20: TextStyle,
@@ -43,6 +44,7 @@ data class WeatherAppRBKTypography(
     val weight600Size34LineHeight41: TextStyle,
     val weight600Size42LineHeight48: TextStyle,
     val weight700Size20LineHeight28: TextStyle,
+    val weight700Size32LineHeight38: TextStyle,
 )
 
 @Composable
@@ -55,6 +57,13 @@ fun defaultSanaTypography(): WeatherAppRBKTypography {
             fontWeight = FontWeight.Thin,
             fontSize = 92.sp,
             lineHeight = 92.sp
+        ),
+        weight300Size42LineHeight48LetterSpacing4 = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.W300,
+            fontSize = 42.sp,
+            lineHeight = 48.sp,
+            letterSpacing = 4.sp
         ),
         weight400Size12LineHeight16 = TextStyle(
             fontFamily = fontFamily,
@@ -159,6 +168,7 @@ fun defaultSanaTypography(): WeatherAppRBKTypography {
             fontSize = 42.sp,
             lineHeight = 48.sp
         ),
+
         weight700Size20LineHeight28 = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.W700,
@@ -176,7 +186,13 @@ fun defaultSanaTypography(): WeatherAppRBKTypography {
             fontWeight = FontWeight.W600,
             fontSize = 34.sp,
             lineHeight = 41.sp
-        )
+        ),
+        weight700Size32LineHeight38 = TextStyle(
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.W700,
+            fontSize = 32.sp,
+            lineHeight = 38.sp
+        ),
     )
 }
 val LocalWeatherAppRBKTypography = staticCompositionLocalOf<WeatherAppRBKTypography> {

@@ -26,7 +26,7 @@ data class WeatherAppRBKDimensions(
     val screenHorizontalPadding: Dp = 16.dp,
     val screenVerticalPadding: Dp = 16.dp,
 
-    val cardCornerRadius: Dp = 16.dp,
+    val cardCornerRadius: Dp = 12.dp,
     val buttonCornerRadius: Dp = 14.dp,
     val textFieldCornerRadius: Dp = 12.dp
 )

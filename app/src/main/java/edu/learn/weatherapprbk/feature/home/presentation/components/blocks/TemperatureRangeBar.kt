@@ -1,4 +1,4 @@
-package edu.learn.weatherapprbk.feature.home.presentation.components
+package edu.learn.weatherapprbk.feature.home.presentation.components.blocks
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.height

@@ -34,6 +34,9 @@ val OnSecondaryDark = PrimaryBlue
 val DividerDark = Color(0x40C9FFFA)
 val BorderDark = Color(0x66FFFBFC)
 
+// Detail Screen
+val DetailBackground = Color(0xFF2B4F73)
+
 // Extra
 val SuccessColor = AccentTurquoise
 val ErrorColor = Color(0xFFE85D75)
@@ -44,6 +47,7 @@ val TabBarItemSelected = Color(0xFF377DC3)
 val TabBarItemUnselected = Color(0x334A90D6)
 val TabBarIconSelected = SoftWhite
 val TabBarIconUnselected = MintLight
+
 val TabBarContainerLight = Color(0xFFFFFFFF)
 val TabBarItemSelectedLight = Color(0xFFE0F2FE)
 val TabBarItemUnselectedLight = Color(0xFFFFFFFF)

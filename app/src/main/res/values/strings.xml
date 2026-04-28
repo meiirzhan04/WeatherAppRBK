@@ -67,6 +67,19 @@
     <string name="details_avg_max_above">> above the average daily maximum</string>
     <string name="details_avg_max_below">> below the average daily maximum</string>
     <string name="details_avg_max_near">> average daily maximum</string>
-
+    <string name="now">Now</string>
+    <string name="sunset">Sunset</string>
+    <string name="sunrise">Sunrise</string>
     <string name="details_diff_prefix">By %1$s</string>
+    <string name="detail_more_info">More details about weather and map data</string>
+    <string name="detail_sample_city_name">Almaty</string>
+    <string name="detail_sample_time">15:51</string>
+    <string name="detail_sample_condition">Mostly sunny</string>
+
+    <string name="edit_list">Edit List</string>
+    <string name="notifications">Notifications</string>
+    <string name="celsius_degrees">Celsius Degrees</string>
+    <string name="fahrenheit_degrees">Fahrenheit Degrees</string>
+    <string name="units">Units</string>
+    <string name="report_problem">Report a Problem</string>
 </resources>

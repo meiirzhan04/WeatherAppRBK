@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -28,7 +28,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,12 +39,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.zIndex
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -53,25 +51,30 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.learn.resources.components.LoadingScreen
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
+import edu.learn.weatherapprbk.core.extensions.findActivity
 import edu.learn.weatherapprbk.core.extensions.hasLocationPermission
 import edu.learn.weatherapprbk.core.extensions.isLocationEnabled
+import edu.learn.weatherapprbk.core.extensions.openAppSettings
 import edu.learn.weatherapprbk.core.extensions.openLocationSettings
-import edu.learn.weatherapprbk.domain.model.WeatherInfo
+import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherFloatingBar
+import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherVisualResolver
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.HeaderBlock
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.ShowTimeWeatherBox
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.ShowWeatherTenDayBox
-import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.WeatherCollapsingHeader
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.WeatherHighlightsGrid
 import edu.learn.weatherapprbk.feature.home.presentation.components.errors.inlineNoticeMessage
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onWeatherDetailsClick: () -> Unit = {}
+) {
     val viewModel = koinViewModel<HomeViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
     val lifecycleOwner = LocalLifecycleOwner.current
     var skipFirstResume by remember { mutableStateOf(true) }
     var hasRequestedLocationPermission by rememberSaveable { mutableStateOf(false) }
@@ -81,19 +84,13 @@ fun HomeScreen() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
     }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) {
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         viewModel.onIntent(
             HomeIntent.PermissionResult(
                 granted = context.hasLocationPermission(),
                 isLocationEnabled = context.isLocationEnabled()
             )
         )
-    }
-    val requestLocationPermission = {
-        hasRequestedLocationPermission = true
-        permissionLauncher.launch(locationPermissions)
     }
 
     LaunchedEffect(Unit) {
@@ -104,6 +101,7 @@ fun HomeScreen() {
             )
         )
     }
+
     LaunchedEffect(
         state.isSystemStateKnown,
         state.hasLocationPermission,
@@ -117,8 +115,20 @@ fun HomeScreen() {
             state.weather == null &&
             !state.isUsingCachedData
         ) {
-            requestLocationPermission()
+            hasRequestedLocationPermission = true
+            permissionLauncher.launch(locationPermissions)
         }
+    }
+
+    val shouldOpenAppSettings = remember(state.error, hasRequestedLocationPermission, activity) {
+        val shouldShowPermissionRationale = activity?.let {
+            ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.ACCESS_FINE_LOCATION) ||
+                ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.ACCESS_COARSE_LOCATION)
+        } ?: false
+
+        state.error is HomeError.PermissionDenied &&
+            hasRequestedLocationPermission &&
+            !shouldShowPermissionRationale
     }
 
     DisposableEffect(lifecycleOwner, context) {
@@ -143,11 +153,45 @@ fun HomeScreen() {
     LoadingScreen(isLoading = state.isLoading && state.weather == null) {
         val statusBackgroundRes = state.lastKnownWeather?.let(WeatherVisualResolver::resolveBackground) ?: R.drawable.day
         when {
-            state.weather != null -> HomeScreenContent(state = state, onRefresh = { viewModel.onIntent(HomeIntent.Refresh) })
+            state.weather != null -> HomeScreenContent(
+                state = state,
+                onRefresh = { viewModel.onIntent(HomeIntent.Refresh) },
+                onWeatherDetailsClick = onWeatherDetailsClick
+            )
+
             !state.isSystemStateKnown || state.isLoading -> {
                 HomeStatusScreen(
                     title = stringResource(R.string.loading_weather_title),
                     description = stringResource(R.string.loading_weather_description),
+                    backgroundRes = statusBackgroundRes
+                )
+            }
+
+            state.error is HomeError.PermissionDenied -> {
+                HomeStatusScreen(
+                    title = stringResource(R.string.error_permission_title),
+                    description = stringResource(
+                        if (shouldOpenAppSettings) {
+                            R.string.error_permission_settings_description
+                        } else {
+                            R.string.error_permission_description
+                        }
+                    ),
+                    primaryActionLabel = stringResource(
+                        if (shouldOpenAppSettings) {
+                            R.string.open_settings
+                        } else {
+                            R.string.grant_permission
+                        }
+                    ),
+                    onPrimaryAction = {
+                        if (shouldOpenAppSettings) {
+                            context.openAppSettings()
+                        } else {
+                            hasRequestedLocationPermission = true
+                            permissionLauncher.launch(locationPermissions)
+                        }
+                    },
                     backgroundRes = statusBackgroundRes
                 )
             }
@@ -176,10 +220,20 @@ fun HomeScreen() {
                 val serverError = state.error as HomeError.Server
                 HomeStatusScreen(
                     title = stringResource(R.string.error_server_title),
-                    description = stringResource(
-                        R.string.error_server_description,
-                        serverError.code ?: 0
-                    ),
+                    description = stringResource(R.string.error_server_description, serverError.code ?: 0),
+                    primaryActionLabel = stringResource(R.string.retry),
+                    onPrimaryAction = { viewModel.onIntent(HomeIntent.Retry) },
+                    backgroundRes = statusBackgroundRes
+                )
+            }
+
+            state.error is HomeError.Unknown -> {
+                val unknownError = state.error as HomeError.Unknown
+                HomeStatusScreen(
+                    title = stringResource(R.string.error_unknown_title),
+                    description = unknownError.message.ifBlank {
+                        context.getString(R.string.error_unknown_description)
+                    },
                     primaryActionLabel = stringResource(R.string.retry),
                     onPrimaryAction = { viewModel.onIntent(HomeIntent.Retry) },
                     backgroundRes = statusBackgroundRes
@@ -202,10 +256,12 @@ fun HomeScreen() {
 private fun HomeScreenContent(
     state: HomeState,
     onRefresh: () -> Unit,
+    onWeatherDetailsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val weather = state.weather ?: return
     val listState = rememberLazyListState()
+
     Box(modifier = modifier.fillMaxSize()) {
         Crossfade(targetState = weather) { currentWeather ->
             Image(
@@ -215,6 +271,7 @@ private fun HomeScreenContent(
                 contentScale = ContentScale.Crop
             )
         }
+
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = onRefresh,
@@ -226,16 +283,19 @@ private fun HomeScreenContent(
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp)
             ) {
                 item {
+                    Spacer(modifier = Modifier.height(50.dp))
                     HeaderBlock(
                         title = stringResource(R.string.weather_title),
                         cityName = weather.cityName,
                         degree = stringResource(R.string.temperature_degree, weather.temperature.roundToInt()),
-                        conditionText = WeatherVisualResolver.resolveConditionText(description = weather.description, fallbackText = stringResource(R.string.weather_condition_default)),
+                        conditionText = WeatherVisualResolver.resolveConditionText(
+                            description = weather.description,
+                            fallbackText = stringResource(R.string.weather_condition_default)
+                        ),
                         max = stringResource(R.string.temperature_degree, weather.tempMax.roundToInt()),
                         min = stringResource(R.string.temperature_degree, weather.tempMin.roundToInt()),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .align(Alignment.TopCenter)
                             .zIndex(2f)
                             .statusBarsPadding()
                     )
@@ -272,6 +332,20 @@ private fun HomeScreenContent(
                     }
                 }
             }
+
+            WeatherFloatingBar(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(
+                        horizontal = WeatherAppRBKTheme.dimensions.large,
+                        vertical = WeatherAppRBKTheme.dimensions.mediumMedium
+                    ),
+                currentPage = 0,
+                totalPage = 3,
+                onMapClick = {},
+                onListClick = onWeatherDetailsClick
+            )
         }
     }
 }
@@ -282,12 +356,11 @@ private fun HomeStatusScreen(
     description: String,
     primaryActionLabel: String? = null,
     onPrimaryAction: (() -> Unit)? = null,
-    backgroundRes: Int = R.drawable.day,
-    modifier: Modifier = Modifier
+    backgroundRes: Int = R.drawable.day
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(id = backgroundRes),
+            painter = painterResource(backgroundRes),
             contentDescription = "",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop

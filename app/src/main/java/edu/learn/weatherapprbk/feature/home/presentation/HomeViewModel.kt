@@ -5,31 +5,13 @@ import edu.learn.weatherapprbk.core.architecture.BaseViewModel
 import edu.learn.weatherapprbk.core.architecture.ResultState
 import edu.learn.weatherapprbk.core.repository.NetworkException
 import edu.learn.weatherapprbk.core.setup.BaseWeatherSetup
-import edu.learn.weatherapprbk.domain.model.ForecastData
-import edu.learn.weatherapprbk.domain.model.WeatherInfo
 import edu.learn.weatherapprbk.domain.usecase.GetCachedWeatherUseCase
 import edu.learn.weatherapprbk.domain.usecase.GetCurrentLocationUseCase
 import edu.learn.weatherapprbk.domain.usecase.GetCurrentWeatherUseCase
 import edu.learn.weatherapprbk.domain.usecase.GetForecastUseCase
+import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherTarget
 import kotlinx.coroutines.launch
 
-private fun createInitialHomeState(baseWeatherSetup: BaseWeatherSetup): HomeState {
-    val cachedWeather = baseWeatherSetup.getCachedWeather()
-    val cachedForecast = baseWeatherSetup.getCachedForecastData()
-    return HomeState(
-        weather = cachedWeather?.mergeDailyTemperatureRange(cachedForecast),
-        lastKnownWeather = cachedWeather?.mergeDailyTemperatureRange(cachedForecast),
-        weatherDetails = cachedForecast?.details,
-        forecast = cachedForecast?.daily.orEmpty(),
-        hourlyForecast = cachedForecast?.hourly.orEmpty(),
-        isUsingCachedData = cachedWeather != null
-    )
-}
-
-private fun WeatherInfo.mergeDailyTemperatureRange(forecastData: ForecastData?): WeatherInfo {
-    val today = forecastData?.daily?.firstOrNull() ?: return this
-    return copy(tempMin = today.minTemp.toDouble(), tempMax = today.maxTemp.toDouble())
-}
 
 class HomeViewModel(
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
@@ -40,7 +22,6 @@ class HomeViewModel(
 ) : BaseViewModel<HomeIntent, HomeState, HomeEffect>(
     initialState = createInitialHomeState(baseWeatherSetup)
 ) {
-
     init {
         if (state.value.weather == null) {
             viewModelScope.launch {
@@ -63,11 +44,31 @@ class HomeViewModel(
 
     override fun onIntent(intent: HomeIntent) {
         when (intent) {
-            is HomeIntent.Initialize -> handleSystemState(
-                hasLocationPermission = intent.hasLocationPermission,
-                isLocationEnabled = intent.isLocationEnabled,
-                shouldLoad = true
-            )
+            is HomeIntent.Initialize -> {
+                val targetChanged = state.value.target != intent.target
+                setState {
+                    when {
+                        !targetChanged -> copy(target = intent.target)
+                        intent.target is WeatherTarget.City -> copy(
+                            target = intent.target,
+                            weather = null,
+                            lastKnownWeather = null,
+                            weatherDetails = null,
+                            forecast = emptyList(),
+                            hourlyForecast = emptyList(),
+                            isUsingCachedData = false,
+                            error = null
+                        )
+
+                        else -> copy(target = intent.target)
+                    }
+                }
+                handleSystemState(
+                    hasLocationPermission = intent.hasLocationPermission,
+                    isLocationEnabled = intent.isLocationEnabled,
+                    shouldLoad = true
+                )
+            }
 
             is HomeIntent.PermissionResult -> handleSystemState(
                 hasLocationPermission = intent.granted,
@@ -81,8 +82,8 @@ class HomeViewModel(
                 shouldLoad = state.value.weather == null || state.value.isUsingCachedData
             )
 
-            HomeIntent.Refresh -> loadWeatherByCurrentLocation(isRefresh = true)
-            HomeIntent.Retry -> loadWeatherByCurrentLocation()
+            HomeIntent.Refresh -> loadConfiguredWeatherTarget(isRefresh = true)
+            HomeIntent.Retry -> loadConfiguredWeatherTarget()
         }
     }
 
@@ -91,22 +92,42 @@ class HomeViewModel(
         isLocationEnabled: Boolean,
         shouldLoad: Boolean
     ) {
+        val target = state.value.target
         setState {
             copy(
                 isSystemStateKnown = true,
                 hasLocationPermission = hasLocationPermission,
                 isLocationEnabled = isLocationEnabled,
-                error = when {
-                    !hasLocationPermission -> HomeError.PermissionDenied
-                    !isLocationEnabled -> HomeError.LocationDisabled
-                    weather != null && error is HomeError.NoInternet -> error
-                    else -> null
+                error = when (target) {
+                    WeatherTarget.Current -> when {
+                        !hasLocationPermission -> HomeError.PermissionDenied
+                        !isLocationEnabled -> HomeError.LocationDisabled
+                        weather != null && error is HomeError.NoInternet -> error
+                        else -> null
+                    }
+
+                    is WeatherTarget.City -> null
                 }
             )
         }
 
-        if (hasLocationPermission && isLocationEnabled && shouldLoad) {
-            loadWeatherByCurrentLocation()
+        if (!shouldLoad) return
+
+        when (target) {
+            WeatherTarget.Current -> {
+                if (hasLocationPermission && isLocationEnabled) {
+                    loadWeatherByCurrentLocation()
+                }
+            }
+
+            is WeatherTarget.City -> loadWeatherBySelectedCity(target)
+        }
+    }
+
+    private fun loadConfiguredWeatherTarget(isRefresh: Boolean = false) {
+        when (val target = state.value.target) {
+            WeatherTarget.Current -> loadWeatherByCurrentLocation(isRefresh = isRefresh)
+            is WeatherTarget.City -> loadWeatherBySelectedCity(target, isRefresh)
         }
     }
 
@@ -134,6 +155,7 @@ class HomeViewModel(
                     val savedLocation = baseWeatherSetup.getSavedLocation()
                     if (savedLocation != null) {
                         loadWeather(
+                            target = WeatherTarget.Current,
                             lat = savedLocation.latitude,
                             lon = savedLocation.longitude
                         )
@@ -152,6 +174,7 @@ class HomeViewModel(
                 is ResultState.Success -> {
                     baseWeatherSetup.saveLastLocation(locationResult.data)
                     loadWeather(
+                        target = WeatherTarget.Current,
                         lat = locationResult.data.latitude,
                         lon = locationResult.data.longitude
                     )
@@ -162,7 +185,28 @@ class HomeViewModel(
         }
     }
 
+    private fun loadWeatherBySelectedCity(
+        target: WeatherTarget.City,
+        isRefresh: Boolean = false
+    ) {
+        viewModelScope.launch {
+            setState {
+                copy(
+                    isLoading = weather == null,
+                    isRefreshing = isRefresh && weather != null,
+                    error = null
+                )
+            }
+            loadWeather(
+                target = target,
+                lat = target.location.latitude,
+                lon = target.location.longitude
+            )
+        }
+    }
+
     private suspend fun loadWeather(
+        target: WeatherTarget,
         lat: Double,
         lon: Double
     ) {
@@ -174,11 +218,10 @@ class HomeViewModel(
                         copy(
                             isLoading = false,
                             isRefreshing = false,
-                            isUsingCachedData = true,
                             error = mapError(weatherResult)
                         )
                     }
-                } else {
+                } else if (target == WeatherTarget.Current) {
                     val cachedWeather = getCachedWeatherUseCase()
                     val cachedForecast = baseWeatherSetup.getCachedForecastData()
                     if (cachedWeather != null) {
@@ -205,6 +248,15 @@ class HomeViewModel(
                             isUsingCachedData = false
                         )
                     }
+                } else {
+                    setState {
+                        copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            error = mapError(weatherResult),
+                            isUsingCachedData = false
+                        )
+                    }
                 }
             }
 
@@ -213,8 +265,10 @@ class HomeViewModel(
                     is ResultState.Success -> {
                         val forecastData = forecastResult.data
                         val updatedWeather = weatherResult.data.mergeDailyTemperatureRange(forecastData)
-                        baseWeatherSetup.saveLastWeather(updatedWeather)
-                        baseWeatherSetup.saveLastForecastData(forecastData)
+                        if (target == WeatherTarget.Current) {
+                            baseWeatherSetup.saveLastWeather(updatedWeather)
+                            baseWeatherSetup.saveLastForecastData(forecastData)
+                        }
                         setState {
                             copy(
                                 isLoading = false,
@@ -236,23 +290,24 @@ class HomeViewModel(
                                 copy(
                                     isLoading = false,
                                     isRefreshing = false,
-                                    isUsingCachedData = true,
                                     error = mapError(forecastResult)
                                 )
                             }
                         } else {
                             val updatedWeather = weatherResult.data
-                            baseWeatherSetup.saveLastWeather(updatedWeather)
+                            if (target == WeatherTarget.Current) {
+                                baseWeatherSetup.saveLastWeather(updatedWeather)
+                            }
                             setState {
-                            copy(
-                                isLoading = false,
-                                isRefreshing = false,
-                                weather = updatedWeather,
-                                lastKnownWeather = updatedWeather,
-                                weatherDetails = null,
-                                forecast = emptyList(),
-                                hourlyForecast = emptyList(),
-                                isUsingCachedData = false,
+                                copy(
+                                    isLoading = false,
+                                    isRefreshing = false,
+                                    weather = updatedWeather,
+                                    lastKnownWeather = updatedWeather,
+                                    weatherDetails = null,
+                                    forecast = emptyList(),
+                                    hourlyForecast = emptyList(),
+                                    isUsingCachedData = false,
                                     error = mapError(forecastResult)
                                 )
                             }

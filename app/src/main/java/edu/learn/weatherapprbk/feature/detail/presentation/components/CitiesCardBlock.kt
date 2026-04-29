@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.components.safeClickable
 import edu.learn.resources.theme.WeatherAppRBKTheme
 
@@ -32,15 +31,15 @@ fun CitiesCardBlock(
     min: String,
     max: String,
     backgroundRes: Int,
-    onAction: () -> Unit
+    onOpenMain: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(96.dp)
+            .height(WeatherAppRBKTheme.dimensions.cityCardHeight)
             .clip(RoundedCornerShape(WeatherAppRBKTheme.dimensions.cardCornerRadius))
             .background(WeatherAppRBKTheme.colors.whiteTransparent)
-            .safeClickable { onAction() }
+            .safeClickable { onOpenMain() }
     ) {
         Image(
             painter = painterResource(backgroundRes),

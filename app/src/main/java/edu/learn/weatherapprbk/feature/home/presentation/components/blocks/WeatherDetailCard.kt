@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.feature.home.presentation.components.weatherGlassCard
 
@@ -34,7 +33,7 @@ fun WeatherDetailCard(
     Box(
         modifier = modifier
             .weatherGlassCard()
-            .defaultMinSize(minHeight = 160.dp)
+            .defaultMinSize(minHeight = WeatherAppRBKTheme.dimensions.detailCardMinHeight)
     ) {
         Column(
             modifier = Modifier
@@ -43,12 +42,12 @@ fun WeatherDetailCard(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.smallExtra)
             ) {
                 Image(
                     painter = painterResource(iconRes),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(WeatherAppRBKTheme.dimensions.iconMedium),
                     colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.60f))
                 )
                 Text(

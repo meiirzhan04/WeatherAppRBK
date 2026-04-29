@@ -5,10 +5,12 @@ import edu.learn.weatherapprbk.domain.model.ForecastDay
 import edu.learn.weatherapprbk.domain.model.HourlyForecast
 import edu.learn.weatherapprbk.domain.model.WeatherInfo
 import edu.learn.weatherapprbk.domain.model.WeatherDetails
+import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherTarget
 
 
 @Immutable
 data class HomeState(
+    val target: WeatherTarget = WeatherTarget.Current,
     val isSystemStateKnown: Boolean = false,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
@@ -25,7 +27,8 @@ data class HomeState(
 sealed interface HomeIntent {
     data class Initialize(
         val hasLocationPermission: Boolean,
-        val isLocationEnabled: Boolean
+        val isLocationEnabled: Boolean,
+        val target: WeatherTarget = WeatherTarget.Current
     ) : HomeIntent
     data class PermissionResult(
         val granted: Boolean,

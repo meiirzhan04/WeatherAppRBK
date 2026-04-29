@@ -23,7 +23,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.components.safeClickable
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
@@ -47,12 +46,18 @@ fun WeatherFloatingBar(
                 imageVector = Icons.Rounded.Navigation,
                 contentDescription = "",
                 tint = if (currentPage == 0) Color.White else Color.White.copy(0.4f),
-                modifier = Modifier.size(10.dp)
+                modifier = Modifier.size(WeatherAppRBKTheme.dimensions.smallMedium)
             )
             repeat(totalPage - 1) { index ->
                 Box(
                     modifier = Modifier
-                        .size(if (index + 1 == currentPage) 8.dp else 6.dp)
+                        .size(
+                            if (index + 1 == currentPage) {
+                                WeatherAppRBKTheme.dimensions.small
+                            } else {
+                                WeatherAppRBKTheme.dimensions.smallExtra
+                            }
+                        )
                         .clip(CircleShape)
                         .background(if (index + 1 == currentPage) Color.White else Color.White.copy(0.4f))
                 )
@@ -71,10 +76,10 @@ private fun SecondGlassBoxWithIcon(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .size(44.dp)
+            .size(WeatherAppRBKTheme.dimensions.floatingButtonSize)
             .clip(CircleShape)
             .shadow(
-                elevation = 4.dp,
+                elevation = WeatherAppRBKTheme.dimensions.floatingShadowElevation,
                 shape = CircleShape,
                 ambientColor = Color(0xFF000000).copy(alpha = 0.16f),
                 spotColor = Color(0xFF000000).copy(alpha = 0.16f)
@@ -88,9 +93,9 @@ private fun SecondGlassBoxWithIcon(
                 ),
                 shape = CircleShape
             )
-            .blur(0.5.dp)
+            .blur(WeatherAppRBKTheme.dimensions.halfHairline)
             .border(
-                width = 1.dp,
+                width = WeatherAppRBKTheme.dimensions.hairline,
                 color = Color.White.copy(alpha = 0.52f),
                 shape = CircleShape
             )
@@ -113,7 +118,7 @@ private fun GlassCapsule(
         modifier = modifier
             .clip(RoundedCornerShape(50))
             .shadow(
-                elevation = 4.dp,
+                elevation = WeatherAppRBKTheme.dimensions.floatingShadowElevation,
                 shape = RoundedCornerShape(50),
                 ambientColor = Color.Black.copy(alpha = 0.16f),
                 spotColor = Color.Black.copy(alpha = 0.16f)
@@ -127,14 +132,14 @@ private fun GlassCapsule(
                 ),
                 shape = RoundedCornerShape(50)
             )
-            .blur(0.5.dp)
+            .blur(WeatherAppRBKTheme.dimensions.halfHairline)
             .border(
-                width = 1.dp,
+                width = WeatherAppRBKTheme.dimensions.hairline,
                 color = Color.White.copy(alpha = 0.52f),
                 shape = RoundedCornerShape(50)
             )
             .padding(vertical = WeatherAppRBKTheme.dimensions.medium, horizontal = WeatherAppRBKTheme.dimensions.mediumSmall),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.smallExtra),
         verticalAlignment = Alignment.CenterVertically,
         content = content
     )

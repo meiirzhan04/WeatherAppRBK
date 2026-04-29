@@ -12,22 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.components.safeClickable
 import edu.learn.resources.theme.WeatherAppRBKTheme
 
 @Composable
 fun DetailBottomSheet(onAction: (DetailSheetAction) -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = WeatherAppRBKTheme.dimensions.medium)
+            .padding(bottom = WeatherAppRBKTheme.dimensions.medium)
+    ) {
         detailSheetItems.forEach { item ->
-            DetailBottomSheetRowBlock(
-                item = item,
-                onClick = { onAction(item.action) }
-            )
+            DetailBottomSheetRowBlock(item = item, onClick = { onAction(item.action) })
             if (item.showDividerAfter) {
                 HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                    thickness = 1.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = WeatherAppRBKTheme.dimensions.small),
+                    thickness = WeatherAppRBKTheme.dimensions.hairline,
                     color = WeatherAppRBKTheme.colors.textPrimary.copy(alpha = 0.12f)
                 )
             }

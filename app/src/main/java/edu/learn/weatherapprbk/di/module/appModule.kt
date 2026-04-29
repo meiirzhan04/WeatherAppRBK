@@ -4,5 +4,6 @@ val appModules = listOf(
     baseSetupModule,
     locationModule,
     weatherModule,
-    homeModule
+    homeModule,
+    detailModule
 )

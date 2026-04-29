@@ -1,115 +1,145 @@
 package edu.learn.weatherapprbk.feature.detail.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.learn.resources.components.LoadingScreen
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
 import edu.learn.weatherapprbk.core.components.BaseBottomSheet
 import edu.learn.weatherapprbk.feature.detail.presentation.components.CitiesCardBlock
 import edu.learn.weatherapprbk.feature.detail.presentation.components.DetailBottomSheet
 import edu.learn.weatherapprbk.feature.detail.presentation.components.DetailCityCardUi
-import edu.learn.weatherapprbk.feature.detail.presentation.components.DetailSheetAction
+import edu.learn.weatherapprbk.feature.detail.presentation.components.DetailSearchBar
 import edu.learn.weatherapprbk.feature.detail.presentation.components.TopBarDetailBlock
+import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("UnrememberedMutableState")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen() {
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
-    DetailScreenContent(
-        onBackClick = {},
-        onAction = { isBottomSheetVisible = true }
-    )
+fun DetailScreen(
+    onOpenCity: (DetailCityCardUi) -> Unit = {}
+) {
+    val viewModel = koinViewModel<DetailViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        viewModel.onIntent(DetailIntent.Initialize)
+    }
+    LoadingScreen(isLoading = state.isLoading) {
+        when {
+            state.error != null -> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Button(onClick = { viewModel.onIntent(DetailIntent.Retry) }) {
+                        Text("Retry")
+                    }
+                }
+            }
+
+            state.isInitialized -> {
+                DetailScreenContent(
+                    state = state,
+                    onIntent = viewModel::onIntent,
+                    onOpenCity = onOpenCity
+                )
+            }
+        }
+    }
+
     BaseBottomSheet(
-        isVisible = isBottomSheetVisible,
-        onDismiss = { isBottomSheetVisible = false },
+        isVisible = mutableStateOf(state.isBottomSheetVisible),
+        onDismiss = { viewModel.onIntent(DetailIntent.CloseBottomSheet) },
         containerColor = WeatherAppRBKTheme.colors.detailBackground
     ) {
         DetailBottomSheet(
-            onAction = { action ->
-                when (action) {
-                    DetailSheetAction.EDIT_LIST -> {}
-                    DetailSheetAction.NOTIFICATIONS -> {}
-                    DetailSheetAction.CELSIUS -> {}
-                    DetailSheetAction.FAHRENHEIT -> {}
-                    DetailSheetAction.UNITS -> {}
-                    DetailSheetAction.REPORT_PROBLEM -> {}
-                }
-                isBottomSheetVisible = false
-            }
+            onAction = { action -> viewModel.onIntent(DetailIntent.OnSheetActionClick(action)) }
         )
     }
 }
 
 @Composable
 private fun DetailScreenContent(
-    onBackClick: () -> Unit = {},
-    onAction: () -> Unit = {}
+    state: DetailState,
+    onIntent: (DetailIntent) -> Unit,
+    onOpenCity: (DetailCityCardUi) -> Unit
 ) {
-    val cards = listOf(
-        DetailCityCardUi(
-            cityName = "Almaty",
-            time = "15:51",
-            temperature = "11",
-            condition = "Mostly sunny",
-            min = "3",
-            max = "11"
-        ),
-        DetailCityCardUi(
-            cityName = "Almaty",
-            time = "15:51",
-            temperature = "11",
-            condition = "Mostly sunny",
-            min = "3",
-            max = "11"
-        ),
-    )
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = WeatherAppRBKTheme.colors.detailBackground,
-        topBar = { TopBarDetailBlock(onAction = onAction) }
+        topBar = { TopBarDetailBlock(onAction = { onIntent(DetailIntent.OpenBottomSheet) }) }
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(cards) { card ->
-                CitiesCardBlock(
-                    cityName = card.cityName,
-                    time = card.time,
-                    temperature = card.temperature,
-                    condition = card.condition,
-                    min = card.min,
-                    max = card.max,
-                    onAction = onBackClick,
-                    backgroundRes = R.drawable.day
-                )
-            }
-            item {
-                Text(
-                    text = stringResource(R.string.detail_more_info),
-                    color = WeatherAppRBKTheme.colors.textSecondary,
-                    style = WeatherAppRBKTheme.typography.weight500Size12LineHeight16,
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    textAlign = TextAlign.Center
-                )
+            DetailSearchBar(
+                modifier = Modifier.padding(horizontal = WeatherAppRBKTheme.dimensions.medium),
+                value = state.searchQuery,
+                onValueChange = { onIntent(DetailIntent.OnSearchQueryChanged(it)) }
+            )
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    horizontal = WeatherAppRBKTheme.dimensions.screenHorizontalPadding,
+                    vertical = WeatherAppRBKTheme.dimensions.extraMedium
+                ),
+                verticalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.extraMedium)
+            ) {
+                items(state.visibleCards) { card ->
+                    CitiesCardBlock(
+                        cityName = card.cityName,
+                        time = card.time,
+                        temperature = card.temperature,
+                        condition = card.condition,
+                        min = card.min,
+                        max = card.max,
+                        onOpenMain = { onOpenCity(card) },
+                        backgroundRes = card.backgroundRes
+                    )
+                }
+                if (state.searchQuery.isNotBlank() && state.visibleCards.isEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.detail_search_empty),
+                            color = WeatherAppRBKTheme.colors.textSecondary,
+                            style = WeatherAppRBKTheme.typography.weight400Size16LineHeight21,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = WeatherAppRBKTheme.dimensions.mediumLarge),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+                if (state.visibleCards.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.detail_more_info),
+                            color = WeatherAppRBKTheme.colors.textSecondary,
+                            style = WeatherAppRBKTheme.typography.weight500Size12LineHeight16,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = WeatherAppRBKTheme.dimensions.small),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
     }

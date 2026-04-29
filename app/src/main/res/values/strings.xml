@@ -72,6 +72,8 @@
     <string name="sunrise">Sunrise</string>
     <string name="details_diff_prefix">By %1$s</string>
     <string name="detail_more_info">More details about weather and map data</string>
+    <string name="detail_search_placeholder">Search for a city or airport</string>
+    <string name="detail_search_empty">No matching cities found</string>
     <string name="detail_sample_city_name">Almaty</string>
     <string name="detail_sample_time">15:51</string>
     <string name="detail_sample_condition">Mostly sunny</string>

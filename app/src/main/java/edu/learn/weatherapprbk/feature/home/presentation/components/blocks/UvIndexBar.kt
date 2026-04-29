@@ -11,15 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import edu.learn.resources.theme.WeatherAppRBKTheme
 
 @Composable
 fun UvIndexBar(progress: Float) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(6.dp)
-            .clip(RoundedCornerShape(999.dp))
+            .height(WeatherAppRBKTheme.dimensions.smallExtra)
+            .clip(RoundedCornerShape(WeatherAppRBKTheme.dimensions.fullRound))
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
@@ -34,9 +34,9 @@ fun UvIndexBar(progress: Float) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(progress)
-                .widthIn(min = 14.dp)
-                .height(6.dp)
-                .clip(RoundedCornerShape(999.dp))
+                .widthIn(min = WeatherAppRBKTheme.dimensions.iconSmall)
+                .height(WeatherAppRBKTheme.dimensions.smallExtra)
+                .clip(RoundedCornerShape(WeatherAppRBKTheme.dimensions.fullRound))
                 .background(Color.White.copy(alpha = 0.35f))
         )
     }

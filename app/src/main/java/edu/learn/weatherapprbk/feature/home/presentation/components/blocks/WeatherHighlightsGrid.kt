@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.datetime.WeatherDateTimeFormatter
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
@@ -46,13 +45,13 @@ fun WeatherHighlightsGrid(
     val averageMaxValue = forecast.map { it.maxTemp }.average()
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.small)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.small)
         ) {
             WeatherDetailCard(
                 title = stringResource(R.string.in_middle),
@@ -135,7 +134,7 @@ fun WeatherHighlightsGrid(
                 )
             )
             HorizontalDivider(
-                thickness = 1.dp,
+                thickness = WeatherAppRBKTheme.dimensions.hairline,
                 color = Color.White.copy(alpha = 0.10f),
                 modifier = Modifier.padding(vertical = WeatherAppRBKTheme.dimensions.extraMedium)
             )
@@ -147,7 +146,7 @@ fun WeatherHighlightsGrid(
                 )
             )
             HorizontalDivider(
-                thickness = 1.dp,
+                thickness = WeatherAppRBKTheme.dimensions.hairline,
                 color = Color.White.copy(alpha = 0.10f),
                 modifier = Modifier.padding(vertical = WeatherAppRBKTheme.dimensions.extraMedium)
             )
@@ -160,7 +159,7 @@ fun WeatherHighlightsGrid(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.small)
         ) {
             WeatherDetailCard(
                 title = stringResource(R.string.details_uv_index),
@@ -220,7 +219,7 @@ fun WeatherHighlightsGrid(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.small)
         ) {
             WeatherDetailCard(
                 title = stringResource(R.string.details_humidity),
@@ -254,14 +253,14 @@ fun WeatherHighlightsGrid(
                 Spacer(Modifier.weight(1f))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.extraExtraSmall),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowDownward,
                         contentDescription = "",
                         tint = WeatherAppRBKTheme.colors.textSecondary,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(WeatherAppRBKTheme.dimensions.iconMedium)
                     )
                     Text(
                         text = stringResource(R.string.details_pressure_unit_hpa),

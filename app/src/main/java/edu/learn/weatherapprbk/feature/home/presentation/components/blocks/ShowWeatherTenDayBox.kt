@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
 import edu.learn.weatherapprbk.domain.model.ForecastDay
@@ -53,12 +52,12 @@ fun ShowWeatherTenDayBox(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.smallExtra)
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_calendar),
                     contentDescription = stringResource(R.string.forecast_icon_content_description),
-                    modifier = Modifier.size(14.dp),
+                    modifier = Modifier.size(WeatherAppRBKTheme.dimensions.iconSmall),
                     colorFilter = ColorFilter.tint(Color.White.copy(alpha = 0.55f))
                 )
                 Text(
@@ -69,7 +68,7 @@ fun ShowWeatherTenDayBox(
             }
             forecast.forEach { item ->
                 HorizontalDivider(
-                    thickness = 1.dp,
+                    thickness = WeatherAppRBKTheme.dimensions.hairline,
                     color = Color.White.copy(alpha = 0.14f),
                     modifier = Modifier.padding(top = WeatherAppRBKTheme.dimensions.extraMedium)
                 )
@@ -95,12 +94,12 @@ private fun ForecastDayRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(38.dp),
+            .height(WeatherAppRBKTheme.dimensions.forecastRowHeight),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = if (item.isToday) stringResource(R.string.today) else item.dateLabel,
-            modifier = Modifier.width(70.dp),
+            modifier = Modifier.width(WeatherAppRBKTheme.dimensions.forecastLabelWidth),
             style = WeatherAppRBKTheme.typography.weight500Size18LineHeight24,
             color = WeatherAppRBKTheme.colors.textPrimary
         )
@@ -108,12 +107,12 @@ private fun ForecastDayRow(
         Image(
             painter = painterResource(resolveHourlyWeatherIcon(item.condition, item.iconCode)),
             contentDescription = null,
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier.size(WeatherAppRBKTheme.dimensions.iconLarge)
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = stringResource(R.string.temperature_degree, item.minTemp),
-            modifier = Modifier.width(32.dp),
+            modifier = Modifier.width(WeatherAppRBKTheme.dimensions.temperatureValueWidth),
             style = WeatherAppRBKTheme.typography.weight500Size18LineHeight24,
             color = Color.White.copy(alpha = 0.56f)
         )
@@ -123,12 +122,12 @@ private fun ForecastDayRow(
         TemperatureRangeBar(
             startFraction = startFraction,
             endFraction = endFraction,
-            modifier = Modifier.width(96.dp)
+            modifier = Modifier.width(WeatherAppRBKTheme.dimensions.temperatureBarWidth)
         )
         Spacer(modifier = Modifier.width(WeatherAppRBKTheme.dimensions.extraMedium))
         Text(
             text = stringResource(R.string.temperature_degree, item.maxTemp),
-            modifier = Modifier.width(32.dp),
+            modifier = Modifier.width(WeatherAppRBKTheme.dimensions.temperatureValueWidth),
             style = WeatherAppRBKTheme.typography.weight500Size18LineHeight24,
             color = WeatherAppRBKTheme.colors.textPrimary
         )

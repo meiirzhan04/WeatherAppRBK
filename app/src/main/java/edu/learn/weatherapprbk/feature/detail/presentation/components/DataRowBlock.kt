@@ -14,13 +14,13 @@ enum class DetailSheetAction {
 }
 
 sealed interface DetailSheetLeading {
-    data class Icon(@DrawableRes val icon: Int) : DetailSheetLeading
+    data class Icon(@param:DrawableRes val icon: Int) : DetailSheetLeading
     data class Text(val value: String) : DetailSheetLeading
 }
 
 data class DetailSheetItem(
     val leading: DetailSheetLeading,
-    @StringRes val title: Int,
+    @param:StringRes val title: Int,
     val action: DetailSheetAction,
     val showDividerAfter: Boolean = false
 )

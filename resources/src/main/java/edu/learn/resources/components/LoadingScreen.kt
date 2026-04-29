@@ -18,16 +18,24 @@ fun LoadingScreen(
     content: @Composable () -> Unit = {}
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(WeatherAppRBKTheme.colors.detailBackground),
         contentAlignment = Alignment.Center
     ) {
-        content()
-        AnimatedVisibility(visible = isLoading, enter = fadeIn(), exit = fadeOut()) {
+        if (!isLoading) { content() }
+        AnimatedVisibility(
+            visible = isLoading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = WeatherAppRBKTheme.colors.whiteTransparent)
+                CircularProgressIndicator(
+                    color = WeatherAppRBKTheme.colors.whiteTransparent
+                )
             }
         }
     }

@@ -41,7 +41,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
@@ -58,20 +57,37 @@ import edu.learn.weatherapprbk.core.extensions.openAppSettings
 import edu.learn.weatherapprbk.core.extensions.openLocationSettings
 import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherFloatingBar
 import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherVisualResolver
+import edu.learn.weatherapprbk.feature.home.presentation.components.WeatherTarget
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.HeaderBlock
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.ShowTimeWeatherBox
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.ShowWeatherTenDayBox
 import edu.learn.weatherapprbk.feature.home.presentation.components.blocks.WeatherHighlightsGrid
 import edu.learn.weatherapprbk.feature.home.presentation.components.errors.inlineNoticeMessage
+import edu.learn.weatherapprbk.domain.model.UserLocation
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
+    selectedCityId: String? = null,
+    selectedLatitude: Double? = null,
+    selectedLongitude: Double? = null,
     onWeatherDetailsClick: () -> Unit = {}
 ) {
     val viewModel = koinViewModel<HomeViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val target = remember(selectedCityId, selectedLatitude, selectedLongitude) {
+        if (selectedLatitude != null && selectedLongitude != null) {
+            WeatherTarget.City(
+                id = selectedCityId ?: "$selectedLatitude:$selectedLongitude",
+                location = UserLocation(latitude = selectedLatitude, longitude = selectedLongitude)
+            )
+        } else {
+            WeatherTarget.Current
+        }
+    }
+    val hasSelectedTarget = target is WeatherTarget.City
+    val isAwaitingTargetInitialization = hasSelectedTarget && state.target != target
 
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
@@ -93,11 +109,12 @@ fun HomeScreen(
         )
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(target) {
         viewModel.onIntent(
             HomeIntent.Initialize(
                 hasLocationPermission = context.hasLocationPermission(),
-                isLocationEnabled = context.isLocationEnabled()
+                isLocationEnabled = context.isLocationEnabled(),
+                target = target
             )
         )
     }
@@ -112,6 +129,7 @@ fun HomeScreen(
             state.isSystemStateKnown &&
             !context.hasLocationPermission() &&
             !hasRequestedLocationPermission &&
+            !hasSelectedTarget &&
             state.weather == null &&
             !state.isUsingCachedData
         ) {
@@ -150,16 +168,20 @@ fun HomeScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    LoadingScreen(isLoading = state.isLoading && state.weather == null) {
-        val statusBackgroundRes = state.lastKnownWeather?.let(WeatherVisualResolver::resolveBackground) ?: R.drawable.day
+    LoadingScreen(isLoading = isAwaitingTargetInitialization || (state.isLoading && state.weather == null)) {
+        val statusBackgroundRes = if (isAwaitingTargetInitialization) {
+            R.drawable.day
+        } else {
+            state.lastKnownWeather?.let(WeatherVisualResolver::resolveBackground) ?: R.drawable.day
+        }
         when {
-            state.weather != null -> HomeScreenContent(
+            !isAwaitingTargetInitialization && state.weather != null -> HomeScreenContent(
                 state = state,
                 onRefresh = { viewModel.onIntent(HomeIntent.Refresh) },
                 onWeatherDetailsClick = onWeatherDetailsClick
             )
 
-            !state.isSystemStateKnown || state.isLoading -> {
+            isAwaitingTargetInitialization || !state.isSystemStateKnown || state.isLoading -> {
                 HomeStatusScreen(
                     title = stringResource(R.string.loading_weather_title),
                     description = stringResource(R.string.loading_weather_description),
@@ -280,10 +302,14 @@ private fun HomeScreenContent(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp)
+                contentPadding = PaddingValues(
+                    start = WeatherAppRBKTheme.dimensions.screenHorizontalPadding,
+                    end = WeatherAppRBKTheme.dimensions.screenHorizontalPadding,
+                    bottom = WeatherAppRBKTheme.dimensions.mediumLarge
+                )
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(50.dp))
+                    Spacer(modifier = Modifier.height(WeatherAppRBKTheme.dimensions.headerTopSpacer))
                     HeaderBlock(
                         title = stringResource(R.string.weather_title),
                         cityName = weather.cityName,
@@ -303,9 +329,12 @@ private fun HomeScreenContent(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(14.dp))
+                                .clip(RoundedCornerShape(WeatherAppRBKTheme.dimensions.buttonCornerRadius))
                                 .background(Color.Black.copy(alpha = 0.20f))
-                                .padding(horizontal = 14.dp, vertical = 12.dp)
+                                .padding(
+                                    horizontal = WeatherAppRBKTheme.dimensions.buttonCornerRadius,
+                                    vertical = WeatherAppRBKTheme.dimensions.extraMedium
+                                )
                         ) {
                             Text(
                                 text = message,
@@ -314,14 +343,14 @@ private fun HomeScreenContent(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(WeatherAppRBKTheme.dimensions.extraMedium))
                     ShowTimeWeatherBox(
                         infoText = stringResource(R.string.hourly_weather_summary, weather.description),
                         hourlyForecast = state.hourlyForecast
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(WeatherAppRBKTheme.dimensions.small))
                     ShowWeatherTenDayBox(forecast = state.forecast)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(WeatherAppRBKTheme.dimensions.small))
                     state.weatherDetails?.let { details ->
                         WeatherHighlightsGrid(
                             weather = weather,
@@ -380,7 +409,7 @@ private fun HomeStatusScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(28.dp))
+                    .clip(RoundedCornerShape(WeatherAppRBKTheme.dimensions.statusCardCornerRadius))
                     .background(Color.White.copy(alpha = 0.12f))
             ) {
                 Column(

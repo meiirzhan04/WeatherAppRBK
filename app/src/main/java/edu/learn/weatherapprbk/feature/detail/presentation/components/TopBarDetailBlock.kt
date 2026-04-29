@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.components.safeClickable
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
@@ -22,14 +21,20 @@ fun TopBarDetailBlock(
     onAction: () -> Unit
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 32.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(
+                start = WeatherAppRBKTheme.dimensions.screenHorizontalPadding,
+                end = WeatherAppRBKTheme.dimensions.screenHorizontalPadding,
+                top = WeatherAppRBKTheme.dimensions.topBarTopInset
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = stringResource(R.string.weather_title),
             style = WeatherAppRBKTheme.typography.weight700Size32LineHeight38,
-            color = WeatherAppRBKTheme.colors.tabBarContainer
+            color = WeatherAppRBKTheme.colors.textPrimary
         )
         Image(
             painter = painterResource(R.drawable.ic_tabbar_detail),

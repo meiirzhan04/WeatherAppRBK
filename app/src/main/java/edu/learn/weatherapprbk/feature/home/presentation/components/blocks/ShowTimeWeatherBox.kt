@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
 import edu.learn.weatherapprbk.domain.model.HourlyForecast
@@ -48,7 +47,7 @@ fun ShowTimeWeatherBox(
             )
             Spacer(Modifier.height(WeatherAppRBKTheme.dimensions.medium))
             HorizontalDivider(
-                thickness = 1.dp,
+                thickness = WeatherAppRBKTheme.dimensions.hairline,
                 color = WeatherAppRBKTheme.colors.divider,
                 modifier = Modifier.padding(horizontal = WeatherAppRBKTheme.dimensions.medium)
             )
@@ -86,7 +85,7 @@ private fun ColumnInfoWeather(item: HourlyForecast) {
                 }
             ),
             contentDescription = "",
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier.size(WeatherAppRBKTheme.dimensions.iconLarge)
         )
         Text(
             text = when {

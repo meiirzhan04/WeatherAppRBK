@@ -9,7 +9,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.theme.WeatherAppRBKTheme
 
 @Composable
@@ -21,7 +20,7 @@ fun TemperatureRangeBar(
     val color = WeatherAppRBKTheme.colors.secondary
     Canvas(
         modifier = modifier
-            .height(8.dp)
+            .height(WeatherAppRBKTheme.dimensions.small)
             .padding(vertical = WeatherAppRBKTheme.dimensions.hairline)
     ) {
         val radius = CornerRadius(size.height / 2f, size.height / 2f)

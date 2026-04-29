@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
 
@@ -35,21 +34,23 @@ fun WeatherCollapsingHeader(
     modifier: Modifier = Modifier
 ) {
     val p = progress.coerceIn(0f, 1f)
+    val mediumLarge = WeatherAppRBKTheme.dimensions.mediumLarge
+    val small = WeatherAppRBKTheme.dimensions.small
     Box(modifier = modifier) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer {
                     alpha = (1f - p * 1.15f).coerceIn(0f, 1f)
-                    translationY = -24.dp.toPx() * p
+                    translationY = -mediumLarge.toPx() * p
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(WeatherAppRBKTheme.dimensions.small))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.extraSmall)
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_location),
@@ -61,7 +62,7 @@ fun WeatherCollapsingHeader(
                     color = WeatherAppRBKTheme.colors.textPrimary
                 )
             }
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(WeatherAppRBKTheme.dimensions.smallExtra))
             Text(
                 text = cityName,
                 style = WeatherAppRBKTheme.typography.weight500Size32LineHeight38,
@@ -95,14 +96,15 @@ fun WeatherCollapsingHeader(
                 .align(Alignment.TopCenter)
                 .graphicsLayer {
                     alpha = ((p - 0.45f) / 0.55f).coerceIn(0f, 1f)
-                    translationY = -8.dp.toPx() * (1f - ((p - 0.45f) / 0.55f).coerceIn(0f, 1f))
+                    translationY = -small.toPx() *
+                        (1f - ((p - 0.45f) / 0.55f).coerceIn(0f, 1f))
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(WeatherAppRBKTheme.dimensions.smallExtra))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.extraSmall)
             ) {
                 Image(
                     painter = painterResource(R.drawable.ic_location),
@@ -114,7 +116,7 @@ fun WeatherCollapsingHeader(
                     color = WeatherAppRBKTheme.colors.textPrimary
                 )
             }
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(WeatherAppRBKTheme.dimensions.extraSmall))
             Text(
                 text = cityName,
                 style = WeatherAppRBKTheme.typography.weight500Size32LineHeight38,

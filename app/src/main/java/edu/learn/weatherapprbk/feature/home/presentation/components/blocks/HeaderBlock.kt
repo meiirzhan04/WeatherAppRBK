@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.lerp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp as lerpFloat
 import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
@@ -36,12 +35,13 @@ fun HeaderBlock(
     modifier: Modifier = Modifier
 ) {
     val progress = collapseProgress.coerceIn(0f, 1f)
+    val headerCollapseOffset = WeatherAppRBKTheme.dimensions.headerCollapseOffset
     Column(
         modifier = modifier
             .fillMaxWidth()
             .graphicsLayer {
                 alpha = (1f - progress * 1.15f).coerceIn(0f, 1f)
-                translationY = -56.dp.toPx() * progress
+                translationY = -headerCollapseOffset.toPx() * progress
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -71,7 +71,13 @@ fun HeaderBlock(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(lerp(start = 180.dp, stop = 0.dp, fraction = progress))
+                .height(
+                    lerp(
+                        start =  WeatherAppRBKTheme.dimensions.headerExpandedHeight,
+                        stop = WeatherAppRBKTheme.dimensions.zero,
+                        fraction = progress
+                    )
+                )
                 .clipToBounds(),
             contentAlignment = Alignment.TopCenter
         ) {

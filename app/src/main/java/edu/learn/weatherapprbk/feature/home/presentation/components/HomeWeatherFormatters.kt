@@ -2,6 +2,7 @@ package edu.learn.weatherapprbk.feature.home.presentation.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import edu.learn.resources.components.symbols.AppSymbols
 import edu.learn.weatherapprbk.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -40,7 +41,7 @@ fun averageMaxDiffText(
     averageMaxValue: Double
 ): String {
     val diff = abs(todayValue - averageMaxValue).roundToInt()
-    return stringResource(R.string.details_diff_prefix, "$diff\u00B0")
+    return stringResource(R.string.details_diff_prefix, "$diff${AppSymbols.DEGREE}")
 }
 
 @Composable
@@ -55,11 +56,11 @@ fun uvLevelLabel(uvIndex: Double): String {
     return stringResource(stringId)
 }
 
-fun formatTemperature(value: Double): String = "${value.roundToInt()}\u00B0"
+fun formatTemperature(value: Double): String = "${value.roundToInt()}${AppSymbols.DEGREE}"
 fun metersPerSecondToKmPerHour(value: Double): Int = (value * 3.6).roundToInt()
 fun windDirectionLabel(degrees: Int): String {
     val normalizedDegrees = ((degrees % 360) + 360) % 360
     val sector = ((normalizedDegrees / 45.0).roundToInt()) % 8
     val direction = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")[sector]
-    return "$degrees\u00B0 $direction"
+    return "$degrees${AppSymbols.DEGREE} $direction"
 }

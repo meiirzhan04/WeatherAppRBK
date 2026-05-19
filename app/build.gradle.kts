@@ -16,6 +16,59 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        resValues = true
+    }
+    flavorDimensions += "environment"
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://api.openweathermap.org/\""
+            )
+
+            resValue(
+                "string",
+                "app_name",
+                "Weather Dev"
+            )
+        }
+        create("qa") {
+            dimension = "environment"
+            applicationIdSuffix = ".qa"
+            versionNameSuffix = "-qa"
+
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://api.openweathermap.org/\""
+            )
+
+            resValue(
+                "string",
+                "app_name",
+                "Weather QA"
+            )
+        }
+        create("prod") {
+            dimension = "environment"
+
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://api.openweathermap.org/\""
+            )
+
+            resValue(
+                "string",
+                "app_name",
+                "Weather"
+            )
+        }
     }
     defaultConfig {
         applicationId = "edu.learn.weatherapprbk"
@@ -30,8 +83,13 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+            isShrinkResources = false
+        }
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -65,16 +123,12 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.material3)
     implementation(libs.androidx.compose.material3.material3)
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
-    implementation(libs.material)
-    implementation(libs.play.services.location)
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.logging.interceptor)
+    implementation(libs.ktor.client.content.negotiation)
     implementation(libs.play.services.location)
     implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.serialization.gson)
+    implementation(libs.material)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.lifecycle.runtimeCompose)

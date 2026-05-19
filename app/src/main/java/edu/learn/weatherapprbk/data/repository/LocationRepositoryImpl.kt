@@ -26,31 +26,17 @@ class LocationRepositoryImpl(
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
                     if (location != null) {
-                        continuation.resume(
-                            ResultState.Success(
-                                UserLocation(
-                                    latitude = location.latitude,
-                                    longitude = location.longitude
-                                )
-                            )
-                        )
+                        continuation.resume(ResultState.Success(UserLocation(latitude = location.latitude, longitude = location.longitude)))
                     } else {
                         requestFreshLocation(continuation)
                     }
                 }
-                .addOnFailureListener { exception ->
-                    continuation.resume(ResultState.Error(exception.message.orEmpty()))
-                }
+                .addOnFailureListener { exception -> continuation.resume(ResultState.Error(exception.message.orEmpty())) }
         }
 
     @SuppressLint("MissingPermission")
-    private fun requestFreshLocation(
-        continuation: Continuation<ResultState<UserLocation>>
-    ) {
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            10_000L
-        )
+    private fun requestFreshLocation(continuation: Continuation<ResultState<UserLocation>>) {
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10_000L)
             .setWaitForAccurateLocation(true)
             .setMinUpdateIntervalMillis(5_000L)
             .setMaxUpdates(1)
@@ -63,10 +49,7 @@ class LocationRepositoryImpl(
                 if (location != null) {
                     continuation.resume(
                         ResultState.Success(
-                            UserLocation(
-                                latitude = location.latitude,
-                                longitude = location.longitude
-                            )
+                            UserLocation(latitude = location.latitude, longitude = location.longitude)
                         )
                     )
                 } else {

@@ -20,17 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import edu.learn.resources.components.safeClickable
+import edu.learn.resources.components.symbols.AppSymbols
 import edu.learn.resources.theme.WeatherAppRBKTheme
 
 @Composable
 fun CitiesCardBlock(
-    cityName: String,
-    time: String,
-    temperature: String,
-    condition: String,
-    min: String,
-    max: String,
-    backgroundRes: Int,
+    city: DetailCityCardUi,
     onOpenMain: () -> Unit
 ) {
     Box(
@@ -42,8 +37,8 @@ fun CitiesCardBlock(
             .safeClickable { onOpenMain() }
     ) {
         Image(
-            painter = painterResource(backgroundRes),
-            contentDescription = null,
+            painter = painterResource(city.backgroundRes),
+            contentDescription = "",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
@@ -64,20 +59,20 @@ fun CitiesCardBlock(
             ) {
                 Column {
                     Text(
-                        text = cityName,
+                        text = city.cityName,
                         style = WeatherAppRBKTheme.typography.weight600Size20LineHeight25,
                         color = WeatherAppRBKTheme.colors.textPrimary
                     )
 
                     Text(
-                        text = time,
+                        text = city.time,
                         style = WeatherAppRBKTheme.typography.weight500Size12LineHeight16,
                         color = WeatherAppRBKTheme.colors.textSecondary
                     )
                 }
 
                 Text(
-                    text = condition,
+                    text = city.condition,
                     style = WeatherAppRBKTheme.typography.weight500Size12LineHeight16,
                     color = WeatherAppRBKTheme.colors.textSecondary
                 )
@@ -89,20 +84,20 @@ fun CitiesCardBlock(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "$temperature\u00B0",
+                    text = "${city.temperature}${AppSymbols.DEGREE}",
                     style = WeatherAppRBKTheme.typography.weight300Size42LineHeight48LetterSpacing4,
                     color = WeatherAppRBKTheme.colors.textPrimary
                 )
 
                 Row {
                     Text(
-                        text = "Max.: $max\u00B0, ",
+                        text = "Max.: ${city.max}${AppSymbols.DEGREE}, ",
                         style = WeatherAppRBKTheme.typography.weight500Size12LineHeight16,
                         color = WeatherAppRBKTheme.colors.textPrimary
                     )
 
                     Text(
-                        text = "Min.: $min\u00B0",
+                        text = "Min.: ${city.min}${AppSymbols.DEGREE}",
                         style = WeatherAppRBKTheme.typography.weight500Size12LineHeight16,
                         color = WeatherAppRBKTheme.colors.textPrimary
                     )

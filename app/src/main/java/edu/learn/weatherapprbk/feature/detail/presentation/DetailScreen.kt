@@ -28,6 +28,7 @@ import edu.learn.resources.theme.WeatherAppRBKTheme
 import edu.learn.weatherapprbk.R
 import edu.learn.weatherapprbk.core.components.BaseBottomSheet
 import edu.learn.weatherapprbk.feature.detail.presentation.components.CitiesCardBlock
+import edu.learn.weatherapprbk.feature.detail.presentation.components.CitySearchResultItem
 import edu.learn.weatherapprbk.feature.detail.presentation.components.DetailBottomSheet
 import edu.learn.weatherapprbk.feature.detail.presentation.components.DetailCityCardUi
 import edu.learn.weatherapprbk.feature.detail.presentation.components.DetailSearchBar
@@ -47,14 +48,6 @@ fun DetailScreen(
     }
     LoadingScreen(isLoading = state.isLoading) {
         when {
-            state.error != null -> {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Button(onClick = { viewModel.onIntent(DetailIntent.Retry) }) {
-                        Text("Retry")
-                    }
-                }
-            }
-
             state.isInitialized -> {
                 DetailScreenContent(
                     state = state,
@@ -104,40 +97,48 @@ private fun DetailScreenContent(
                 ),
                 verticalArrangement = Arrangement.spacedBy(WeatherAppRBKTheme.dimensions.extraMedium)
             ) {
-                items(state.visibleCards) { card ->
-                    CitiesCardBlock(
-                        cityName = card.cityName,
-                        time = card.time,
-                        temperature = card.temperature,
-                        condition = card.condition,
-                        min = card.min,
-                        max = card.max,
-                        onOpenMain = { onOpenCity(card) },
-                        backgroundRes = card.backgroundRes
-                    )
-                }
-                if (state.searchQuery.isNotBlank() && state.visibleCards.isEmpty()) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.detail_search_empty),
-                            color = WeatherAppRBKTheme.colors.textSecondary,
-                            style = WeatherAppRBKTheme.typography.weight400Size16LineHeight21,
-                            modifier = Modifier.fillMaxWidth().padding(vertical = WeatherAppRBKTheme.dimensions.mediumLarge),
-                            textAlign = TextAlign.Center
-                        )
+                if (state.searchQuery.isNotBlank()) {
+                    if (state.isCitySearchLoading) {
+                        item {
+                            Text(
+                                text = "Searching...",
+                                color = WeatherAppRBKTheme.colors.textSecondary,
+                                style = WeatherAppRBKTheme.typography.weight400Size16LineHeight21,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = WeatherAppRBKTheme.dimensions.mediumLarge),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
-                }
-                if (state.visibleCards.isNotEmpty()) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.detail_more_info),
-                            color = WeatherAppRBKTheme.colors.textSecondary,
-                            style = WeatherAppRBKTheme.typography.weight500Size12LineHeight16,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = WeatherAppRBKTheme.dimensions.small),
-                            textAlign = TextAlign.Center
-                        )
+                    items(state.cities) { city -> CitySearchResultItem(city = city, onClick = { onIntent(DetailIntent.OnCityClick(city)) }) }
+                    if (!state.isCitySearchLoading && state.cities.isEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.detail_search_empty),
+                                color = WeatherAppRBKTheme.colors.textSecondary,
+                                style = WeatherAppRBKTheme.typography.weight400Size16LineHeight21,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = WeatherAppRBKTheme.dimensions.mediumLarge),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                } else {
+                    items(state.visibleCards) { card -> CitiesCardBlock(city = card, onOpenMain = { onOpenCity(card) }) }
+                    if (state.visibleCards.isNotEmpty()) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.detail_more_info),
+                                color = WeatherAppRBKTheme.colors.textSecondary,
+                                style = WeatherAppRBKTheme.typography.weight500Size12LineHeight16,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = WeatherAppRBKTheme.dimensions.small),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }

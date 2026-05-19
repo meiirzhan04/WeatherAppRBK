@@ -5,7 +5,7 @@ import edu.learn.weatherapprbk.core.architecture.ResultState
 import edu.learn.weatherapprbk.core.repository.BaseRepository
 import edu.learn.weatherapprbk.core.repository.mappedApiCall
 import edu.learn.weatherapprbk.data.local.dao.WeatherDao
-import edu.learn.weatherapprbk.data.remote.api.WeatherApi
+import edu.learn.weatherapprbk.data.remote.api.WeatherService
 import edu.learn.weatherapprbk.data.local.entity.toDomain
 import edu.learn.weatherapprbk.data.local.entity.toEntity
 import edu.learn.weatherapprbk.data.remote.mapper.ForecastMapper
@@ -15,7 +15,7 @@ import edu.learn.weatherapprbk.domain.model.WeatherInfo
 import edu.learn.weatherapprbk.domain.repository.WeatherRepository
 
 class WeatherRepositoryImpl(
-    private val api: WeatherApi,
+    private val api: WeatherService,
     private val mapper: WeatherMapper,
     private val forecastMapper: ForecastMapper,
     private val weatherDao: WeatherDao
@@ -24,9 +24,7 @@ class WeatherRepositoryImpl(
         val result = mappedApiCall(mapper) {
             api.getCurrentWeather(lat = lat, lon = lon, apiKey = BuildConfig.OPEN_WEATHER_API_KEY)
         }
-        if (result is ResultState.Success) {
-            weatherDao.upsertWeather(result.data.toEntity())
-        }
+        if (result is ResultState.Success) weatherDao.upsertWeather(result.data.toEntity())
         return result
     }
 

@@ -8,6 +8,7 @@ val SoftWhite = Color(0xFFFFFBFC)
 val AccentTurquoise = Color(0xFF60DACF)
 
 // Light theme
+val WhiteTransparent = Color(0x85FFFFFF)
 val BackgroundLight = Color(0xFF377DC3)
 val SurfaceLight = Color(0xFF4A90D6)
 val CardLight = Color(0xFF4A90D6)
@@ -33,6 +34,9 @@ val OnSecondaryDark = PrimaryBlue
 val DividerDark = Color(0x40C9FFFA)
 val BorderDark = Color(0x66FFFBFC)
 
+// Detail Screen
+val DetailBackground = Color(0xFF2B4F73)
+
 // Extra
 val SuccessColor = AccentTurquoise
 val ErrorColor = Color(0xFFE85D75)
@@ -43,3 +47,15 @@ val TabBarItemSelected = Color(0xFF377DC3)
 val TabBarItemUnselected = Color(0x334A90D6)
 val TabBarIconSelected = SoftWhite
 val TabBarIconUnselected = MintLight
+
+val TabBarContainerLight = Color(0xFFFFFFFF)
+val TabBarItemSelectedLight = Color(0xFFE0F2FE)
+val TabBarItemUnselectedLight = Color(0xFFFFFFFF)
+val TabBarIconSelectedLight = PrimaryBlue
+val TabBarIconUnselectedLight = Color(0xFF94A3B8)
+
+val TabBarContainerDark = Color(0xFF131C2E)
+val TabBarItemSelectedDark = Color(0xFF1E3A5F)
+val TabBarItemUnselectedDark = Color(0xFF131C2E)
+val TabBarIconSelectedDark = AccentTurquoise
+val TabBarIconUnselectedDark = Color(0xFF64748B)

@@ -5,17 +5,25 @@ import edu.learn.weatherapprbk.data.remote.dto.WeatherResponseDto
 import edu.learn.weatherapprbk.domain.model.WeatherInfo
 
 class WeatherMapper : BaseMapper<WeatherResponseDto, WeatherInfo> {
-    override fun map(input: WeatherResponseDto): WeatherInfo {
-        val weatherItem = input.weather.firstOrNull()
+    override fun map(source: WeatherResponseDto): WeatherInfo {
         return WeatherInfo(
-            cityName = input.name,
-            temperature = input.main.temp,
-            feelsLike = input.main.feels_like,
-            humidity = input.main.humidity,
-            description = weatherItem?.description.orEmpty(),
-            windSpeed = input.wind.speed,
-            lat = input.coord.lat,
-            lon = input.coord.lon
+            cityName = source.name,
+            temperature = source.main.temp,
+            tempMin = source.main.temp_min,
+            tempMax = source.main.temp_max,
+            feelsLike = source.main.feels_like,
+            humidity = source.main.humidity,
+            description = source.weather.firstOrNull()?.description.orEmpty(),
+            condition = source.weather.firstOrNull()?.main.orEmpty(),
+            pressure = source.main.pressure,
+            windSpeed = source.wind.speed,
+            lat = source.coord.lat,
+            lon = source.coord.lon,
+            timezoneOffsetSeconds = source.timezone,
+            sunriseEpochSeconds = source.sys.sunrise,
+            sunsetEpochSeconds = source.sys.sunset,
+            updatedAtMillis = System.currentTimeMillis(),
+            tempAvg = (source.main.temp_min + source.main.temp_max) / 2
         )
     }
 }

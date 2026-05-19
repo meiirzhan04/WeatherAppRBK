@@ -2,6 +2,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -14,6 +16,59 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        resValues = true
+    }
+    flavorDimensions += "environment"
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://api.openweathermap.org/\""
+            )
+
+            resValue(
+                "string",
+                "app_name",
+                "Weather Dev"
+            )
+        }
+        create("qa") {
+            dimension = "environment"
+            applicationIdSuffix = ".qa"
+            versionNameSuffix = "-qa"
+
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://api.openweathermap.org/\""
+            )
+
+            resValue(
+                "string",
+                "app_name",
+                "Weather QA"
+            )
+        }
+        create("prod") {
+            dimension = "environment"
+
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"https://api.openweathermap.org/\""
+            )
+
+            resValue(
+                "string",
+                "app_name",
+                "Weather"
+            )
+        }
     }
     defaultConfig {
         applicationId = "edu.learn.weatherapprbk"
@@ -28,8 +83,13 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+            isShrinkResources = false
+        }
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -44,11 +104,18 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
-
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3.v130)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.ui)
     implementation(libs.androidx.compose.material3.material33)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.material3)
+    implementation(libs.protolite.well.known.types)
+    implementation(libs.androidx.compose.ui.ui)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.xr.compose.material3.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,15 +123,15 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.material3)
     implementation(libs.androidx.compose.material3.material3)
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
-    implementation(libs.material)
-    implementation(libs.play.services.location)
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.logging.interceptor)
+    implementation(libs.ktor.client.content.negotiation)
     implementation(libs.play.services.location)
     implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.serialization.gson)
+    implementation(libs.material)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    ksp(libs.androidx.room.compiler)
     implementation(project(path = ":resources"))
 }

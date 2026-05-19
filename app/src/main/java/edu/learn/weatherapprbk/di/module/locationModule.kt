@@ -7,11 +7,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val locationModule = module {
-    single<LocationRepository> {
-        LocationRepositoryImpl(androidContext())
-    }
+    single<LocationRepository> { LocationRepositoryImpl(androidContext()) }
 
-    single {
-        GetCurrentLocationUseCase(get())
-    }
+    single { GetCurrentLocationUseCase(get()) }
 }

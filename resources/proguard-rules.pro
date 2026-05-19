@@ -19,3 +19,23 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# ---------- Ktor ----------
+-keep class io.ktor.** { *; }
+-dontwarn io.ktor.**
+
+# ---------- Coroutines ----------
+-keep class kotlinx.coroutines.** { *; }
+-dontwarn kotlinx.coroutines.**
+
+# ---------- Kotlin Serialization ----------
+-keep class kotlinx.serialization.** { *; }
+-dontwarn kotlinx.serialization.**
+
+# ---------- Gson / DTO ----------
+-keep class edu.learn.weatherapprbk.**.*Dto { *; }
+-keep class edu.learn.weatherapprbk.**.dto.** { *; }
+-keep class edu.learn.weatherapprbk.**.model.** { *; }
+
+# ---------- Other warnings ----------
+-dontwarn kotlinx.atomicfu.**
+-dontwarn org.slf4j.**
